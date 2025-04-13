@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { fetchAlbumArt } from "../utils/spotify";
 
 export default function Home() {
   interface Vinyl {
@@ -30,18 +31,9 @@ export default function Home() {
     const randomVinyl = vinylList[Math.floor(Math.random() * vinylList.length)];
     setVinyl(randomVinyl);
 
-    const imagePath = `/albumArt/${randomVinyl.image || "default.jpg"}`;
-    const imageExists = await checkImageExists(imagePath);
-    setImageSrc(imageExists ? imagePath : "/albumArt/default.jpg");
-  };
-
-  const checkImageExists = async (url: string): Promise<boolean> => {
-    try {
-      const response = await fetch(url, { method: "HEAD" });
-      return response.ok;
-    } catch {
-      return false;
-    }
+    // Fetch album art from Spotify
+    const albumArt = await fetchAlbumArt(randomVinyl.Title);
+    setImageSrc(albumArt || "/albumArt/default.jpg"); // Ensure fallback
   };
 
   const saveEdits = async () => {
@@ -110,7 +102,7 @@ export default function Home() {
               <h2 className="text-2xl font-semibold text-gray-700 mb-4">{vinyl.Title}</h2>
               <Image
                 src={imageSrc}
-                alt={vinyl.Title}
+                alt={vinyl?.Title || "Default Album Art"}
                 width={300}
                 height={300}
                 className="rounded-lg"
