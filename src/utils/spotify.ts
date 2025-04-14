@@ -20,12 +20,6 @@ const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
 export async function fetchAlbumArt(albumName: string, localImagePath: string): Promise<string> {
   const now = Date.now();
 
-  // Check if the album art is in the cache and not expired
-  if (albumArtCache[albumName] && albumArtCache[albumName].expiry > now) {
-    console.log(`Cache hit for album: ${albumName}`);
-    return albumArtCache[albumName].url;
-  }
-
   // Step 1: Check if the local file exists
   const localFileExists = await checkLocalFileExists(localImagePath);
   if (localFileExists) {
@@ -66,8 +60,8 @@ export async function fetchAlbumArt(albumName: string, localImagePath: string): 
 async function checkLocalFileExists(filePath: string): Promise<boolean> {
   try {
     const response = await fetch(filePath, { method: "HEAD" });
-    return response.ok;
+    return response.ok; // Returns true if the file exists
   } catch {
-    return false;
+    return false; // Silently return false if the file doesn't exist
   }
 }
