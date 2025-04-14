@@ -31,9 +31,12 @@ export default function Home() {
     const randomVinyl = vinylList[Math.floor(Math.random() * vinylList.length)];
     setVinyl(randomVinyl);
 
-    // Fetch album art from Spotify
-    const albumArt = await fetchAlbumArt(randomVinyl.Title);
-    setImageSrc(albumArt || "/albumArt/default.jpg"); // Ensure fallback
+    // Construct the local image path
+    const localImagePath = `/albumArt/${randomVinyl.image}`;
+
+    // Fetch album art (local -> Spotify -> default)
+    const albumArt = await fetchAlbumArt(randomVinyl.Title, localImagePath);
+    setImageSrc(albumArt);
   };
 
   const saveEdits = async () => {
